@@ -1,0 +1,269 @@
+.container-fluid {
+    width: 90% !important;
+}
+
+.main-component-wrapper {
+    height: auto;
+    margin: 2rem 0 2rem 0;
+    padding: 1rem 1rem;
+    background-clip: border-box;
+    border: 1px solid #C6D2D9;
+    border-bottom: 1px solid #C6D2D9 !important;
+    background-color: #fefefe;
+}
+
+.task-wrapper {
+    border: 1px solid #C6D2D9;
+    border-bottom: 1px solid #C6D2D9 !important;
+    background-color: #fefefe;
+}
+
+.task-component {
+    transition: all ease-in .2s;
+    background-color: #fefefe;
+    border-bottom: 1px solid #C6D2D9;
+    padding: 1rem;
+
+}
+
+.date {
+    background-color: #e4eaee;
+    padding: 0.5rem 0 0.5rem 0;
+    padding-left: 1rem;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    height: 1vh;
+    color: #b4b4b5;
+    margin-bottom: 1rem;
+}
+
+.task-component:hover {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+}
+
+.input-task {
+    display: flex;
+    justify-content: center;
+}
+.create-project {
+    display: flex;
+    justify-content: center;
+} 
+.row {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+}
+.form-control {
+    border-radius: 0 !important;
+}
+.project-input:hover{
+    border : var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+#selected-project {
+    font-size: 15px;
+    color: red !important;
+    margin-right: 15px !important;
+}
+#selected-project:hover {
+    text-decoration: underline;
+}
+
+#project-name {
+    font-size: 18px;
+    padding-left: 5px;
+}
+#project-name:hover {
+    text-decoration: underline;
+}
+.fa-circle-plus {
+    font-size : 18px !important;
+}
+
+.second-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem 1rem;
+}
+
+.tag-bill {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.bill-icon {
+    font-size: 22px;
+    cursor: pointer;
+}
+.bill-color {
+    color: #03a9f4;
+}
+.bill-icon:hover{
+    color: #03a9f4 
+}
+.tag-icon {
+    font-size: 22px;
+    cursor: pointer;
+
+}
+.tag-icon:hover{
+    color: #03a9f4 
+}
+
+.timer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.blue-btn {
+    background-color: #03a9f4 !important;
+    color: white !important;
+    border-radius: 0 !important;
+    padding: 4px 15px !important;
+    margin: 0 15px;
+    border: none;
+}
+
+.close-btn {
+    border: none;
+    background: none;
+    margin-right: 30px !important;
+    color: #03a9f4;
+}
+.close-btn:hover {
+    text-decoration: underline;
+}
+.red-btn {
+    background-color: #f40303 !important;
+    color: white !important;
+    border-radius: 0 !important;
+    padding: 4px 15px !important;
+    margin: 0 15px;
+    border: none;
+}
+.time {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.left {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+.right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+#display-resume-time {
+    font-size: 18px;
+    font-weight: 500;
+
+}
+#resume-btn {
+    margin: 0 2rem;
+    cursor: pointer;
+}
+
+#task-project-name{
+    font-size: 15px;
+    color: #03a9f4;
+}
+.timer-tags {
+    border: 1px solid #b4b4b5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    padding: 0 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.timer-tag {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#delete-btn{
+    cursor: pointer;
+}
+
+.checkbox {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.cross-btn {
+    border: none;
+    padding-left: .2rem;
+    font-size: 0.7rem;
+    background-color: inherit;
+}
+
+.tag-link {
+    cursor: pointer;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tag-link:hover {
+    color: #03a9f4;
+}
+  
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: none !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* blue  */
+/* 
+rgb(3,169,244)
+#03a9f4 
+*/
+
+/* grey */
+/* #e4eaee
+rgb(228,234,238) */
