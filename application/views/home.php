@@ -134,18 +134,69 @@
 
             <diV id="task-component-area">
                 <!-- Task Component generate here  -->
-            </div>
 
-            <?php foreach ($tasks as $task): ?>
-            <div>
-                <h3><?php echo $task['taskName']; ?></h3>
-                <p>Project: <?php echo $task['projectName']; ?></p>
-                <p>Tags: <?php echo $task['tags']; ?></p>
-                <p>Bill: <?php echo $task['bill']; ?></p>
-                <p>taskComponentTime: <?php echo $task['taskComponentTime']; ?></p>
-                <!-- <p>Resume Time: <?php echo $task['resumeTime']; ?></p> -->
+                <?php foreach ($tasks as $task): ?>
+                <div class="task-component" id="<?php echo $task['id']; ?>">
+                    <div class="top">
+                        <?php
+                        $taskComponentTime = json_decode($task['taskComponentTime'], true);
+                        $totalTime = isset($taskComponentTime['totalTime']) ? $taskComponentTime['totalTime'] : '';
+                    ?>
+                        <div id="inherited-time">Total Time: <?php echo $totalTime; ?></div>
+                    </div>
+                    <hr>
+                    <div class="bottom">
+
+                        <input type='checkbox' class="checkbox">
+                        <div class="left">
+                            <div>
+                                <div id="task-name"><?php echo $task['taskName']; ?></div>
+                            </div>
+
+                            <div id="task-project-name">
+                                <?php echo $task['projectName'] ? '●' . $task['projectName'] : ''; ?>
+                            </div>
+
+                            <div id="task-tags" class="timer-tag">
+                                <?php
+                            $tags = json_decode($task['tags'], true);
+                            if (is_array($tags)) {
+                                foreach ($tags as $tag) {
+                                    echo '<span class="timer-tags">' . $tag . '</span>';
+                                }
+                            }
+                            ?>
+                            </div>
+
+
+                            <div id="task-bill" class="<?php echo $task['billColor']; ?>">
+                                <i id="bill" class="fa-regular fa-dollar-sign"></i>
+                            </div>
+                            |
+                        </div>
+
+                        <div class="right">
+                            <div id="display-resume-time">
+                                <?php
+                            $taskComponentTime = json_decode($task['taskComponentTime'], true);
+                            $resumeTime = isset($taskComponentTime['resumeTime']) ? $taskComponentTime['resumeTime'] : '';
+                        ?>
+                                <?php echo $resumeTime; ?>
+                            </div>
+                            <div id="resume-btn" data-component-id="<?php echo $task['id']; ?>">
+                                <i id="toggle-btn" class="fa-solid fa-play"></i>
+                            </div>
+                            <div id="delete-btn">
+                                <i class="fa fa-regular fa-trash-alt"
+                                    data-component-id="task-component-<?php echo $task['id']; ?>"
+                                    data-target="#deleteModal" data-toggle="modal"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+
             </div>
-            <?php endforeach; ?>
 
 
         </div>

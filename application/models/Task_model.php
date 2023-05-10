@@ -5,7 +5,7 @@ class Task_model extends CI_Model {
     
 	public function insert($data) {
         $this->db->insert('taskcomponent', $data);
-        if (!$result) {
+        if (!$data) {
             echo $this->db->error();
         }
         echo $this->db->last_query();
@@ -16,6 +16,10 @@ class Task_model extends CI_Model {
         return $this->db->get('taskcomponent')->result_array();
     }
 
+    public function get_all_task_components() {
+        return $this->db->get('taskcomponent')->result_array();
+    }
+    
 }
 
 ?>
