@@ -1,3 +1,5 @@
+fetchTaskComponents();
+
 const resetValues = () => {
   inputField.value= "";
 
@@ -159,14 +161,16 @@ projDropdownMenu.addEventListener("click", function(event) {
 });
 
 // Get the current date
-const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const currentDate = new Date();
-const dayOfWeek = daysOfWeek[currentDate.getDay()];
-const month = monthsOfYear[currentDate.getMonth()];
-const dayOfMonth = currentDate.getDate();
-const year = currentDate.getFullYear();
-const dateString = `${dayOfWeek}, ${month} ${dayOfMonth} ${year}`;
+// const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+// const currentDate = new Date();
+// const dayOfWeek = daysOfWeek[currentDate.getDay()];
+// const month = monthsOfYear[currentDate.getMonth()];
+// const dayOfMonth = currentDate.getDate();
+// const year = currentDate.getFullYear();
+// const dateString = `${dayOfWeek}, ${month} ${dayOfMonth} ${year}`;
+
+
 
 
 function formatTime(milliseconds) {
@@ -180,6 +184,7 @@ function formatTime(milliseconds) {
 function formatNumber(number) {
   return number.toString().padStart(2, "0");
 }  
+
 
 
 // TIMER 
@@ -209,33 +214,28 @@ startBtn.addEventListener('click', () => {
     propTotalTime = propTime;
     clearInterval(timerInterval); 
     timeDisplay.innerText = "00:00:00"; 
-  
+
     createTaskComponent();
   }  
 
 });  
+
 
 const inputField = document.querySelector('#task-class');
 const taskComponentArea = document.querySelector('#task-component-area');
 const taskWrapper = document.querySelector('#task-wrapper');
 
 const createTaskComponent = async () => {
-  
-  
-  // let taskDate = taskWrapper.querySelector('.date');
-  // if (!taskDate) {
-    //   let dateArea = document.querySelector('#date-area');
-    //   taskWrapper.classList.add('task-wrapper');
-    //   taskDate = document.createElement('div');
-    //   taskDate.classList.add('date');
-  //   taskDate.innerText = dateString;
-  //   dateArea.appendChild(taskDate);
-  // }
 
   const taskName = inputField.value;
   
   const tagElements = Array.from(displayTags.children);
   const tags = tagElements.map((tag) => tag.textContent);
+
+  const currentDate = new Date();
+  const options = { weekday: 'short', month: 'short', day: 'numeric' };
+  const formattedDate = currentDate.toLocaleDateString('en-US', options);
+
   
   const taskComponent = {
     taskName: taskName,
@@ -246,14 +246,17 @@ const createTaskComponent = async () => {
       resumeTime: "00:00:00",
       inheritTaskTime: propTime,
       totalTime: propTotalTime
-    }
+    },
+    date: formattedDate
   };
+  console.log(taskComponent.taskName);
+  console.log(taskComponent.date);
   
   saveTaskComponentToDatabase(taskComponent);
 
   resetValues();
-  console.log("reset");
 }
+
 
 function fetchTaskComponents() {
   fetch('http://localhost/timetracker/index.php/timetracker/get_all_task_components')
@@ -283,11 +286,13 @@ function saveTaskComponentToDatabase(taskComponent) {
       tags: taskComponent.tags,
       billColor: taskComponent.billColor,
       taskComponentTime: taskComponent.taskComponentTime,
+      date: taskComponent.date
     }),
   })
   .then(response => {
     if (response.ok) {
       console.log('Task component saved successfully');
+      // console.log(response);
       fetchTaskComponents();
     } else {
       console.error('Error saving task component to database');
@@ -297,10 +302,14 @@ function saveTaskComponentToDatabase(taskComponent) {
 }
     
 function createTaskComponentElement(taskComponent){
+  const tagsArray = JSON.parse(taskComponent.tags);
+  
   const taskComponentElement = document.createElement('div');
+  taskComponentElement.id = taskComponent.id;
     taskComponentElement.classList.add("task-component");
     taskComponentElement.innerHTML=`
     <div class="top">
+        <div id="date-${taskComponent.id}">${taskComponent.date} </div>
         <div id="inherited-time">Total Time: ${taskComponent.taskComponentTime.totalTime}</div>
     </div>
 
@@ -311,8 +320,8 @@ function createTaskComponentElement(taskComponent){
         <input type='checkbox' class="checkbox" >
         <div class="left">
         
-            <div>
-                <div id="task-name">${taskComponent.taskName}</div>
+            <div class="form-control">
+                <input class="task-name" type="text" id="task-name-${taskComponent.id}" value="${taskComponent.taskName}">
             </div>
 
             <div id="task-project-name">
@@ -320,7 +329,7 @@ function createTaskComponentElement(taskComponent){
             </div>
 
             <div id="task-tags" class="timer-tag"> 
-            ${tags.map((tag) => `<span class="timer-tags">${tag}</span>`).join("")}
+              ${tagsArray.map((tag) => `<span class="timer-tags">${tag}</span>`).join("") }
             </div>
 
             <div id="task-bill" class="${taskComponent.billColor}">
@@ -336,196 +345,107 @@ function createTaskComponentElement(taskComponent){
         <div id="display-resume-time" >
           ${taskComponent.taskComponentTime.resumeTime} 
         </div>
-           <div id="resume-btn" data-component-id="${taskComponent.id}" >
+           <div id="resume-btn-${taskComponent.id}" class="resume-btn" data-component-id="${taskComponent.id}" >
            <i id="toggle-btn" class="fa-solid fa-play"></i>
         </div>
-          <div id="delete-btn">
-          <i class="fa fa-regular fa-trash-alt" data-component-id="task-component-${taskComponent.id}" data-target="#deleteModal" data-toggle="modal" ></i>
+        <div id="delete-btn-${taskComponent.id}">
+          <i class="fa fa-regular fa-trash-alt" data-component-id="${taskComponent.id}" data-target="#deleteModal" data-toggle="modal" ></i>
         </div>
         </div>
   `;    
-  return taskComponentElement;
 
+
+const taskNameInput = taskComponentElement.querySelector(`#task-name-${taskComponent.id}`);
+taskNameInput.addEventListener('change', () => {
+  const updatedTaskName = taskNameInput.value;
+  updateTaskNameInDatabase(taskComponent.id, updatedTaskName);
+});
+
+function updateTaskNameInDatabase(taskId, updatedTaskName) {
+  fetch('http://localhost/timetracker/index.php/timetracker/update_task_name', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      taskId: taskId,
+      taskName: updatedTaskName,
+    }),
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Task name updated successfully');
+      // Optionally, you can update the UI to reflect the updated task name
+    } else {
+      console.error('Error updating task name in the database');
+    }
+  })
+  .catch(error => console.error(error));
 }
 
 
+const dateElement = taskComponentElement.querySelector(`#date-${taskComponent.id}`);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function addComponent() {
-  const taskName = inputField.value;
-  
-  const tagElements = Array.from(displayTags.children);
-  const tags = tagElements.map((tag) => tag.textContent);
-  
-  const taskComponent = {
-    id: `task-component-${componentCount}`,
-    taskName: taskName,
-    projectName: selectedProjValue,
-    tags: tags,
-    billColor: billColor,
-    taskComponentTime: {
-      resumeTime: "00:00:00",
-      inheritTaskTime: propTime,
-      totalTime: propTotalTime
+function updateDate(id) {
+  fetch(`http://localhost/timetracker/index.php/timetracker/get_task_component_date/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
     }
-  };
-  
-  taskComponentArea.appendChild(task);
-  saveTaskComponentToDatabase(taskComponent);
-
-  const component = document.createElement('div');
-    component.id = taskComponent.id;
-    component.classList.add("task-component");
-    component.innerHTML=`
-    <div class="top">
-        <div id="inherited-time">Total Time: ${taskComponent.taskComponentTime.totalTime}</div>
-    </div>
-
-    <hr>
-
-    <div class="bottom">
-
-        <input type='checkbox' class="checkbox" >
-        <div class="left">
-        
-            <div>
-                <div id="task-name">${taskComponent.taskName}</div>
-            </div>
-
-            <div id="task-project-name">
-                ${taskComponent.projectName ? `●${taskComponent.projectName}` : ""}
-            </div>
-
-            <div id="task-tags" class="timer-tag"> 
-            ${tags.map((tag) => `<span class="timer-tags">${tag}</span>`).join("")}
-            </div>
-
-            <div id="task-bill" class="${taskComponent.billColor}">
-          
-            <i id="bill" class="fa-regular fa-dollar-sign"></i>
-                
-            </div>
-            |
-        </div>
-        
-        <div class="right">
-       
-        <div id="display-resume-time" >
-          ${taskComponent.taskComponentTime.resumeTime} 
-        </div>
-           <div id="resume-btn" data-component-id="${taskComponent.id}" >
-           <i id="toggle-btn" class="fa-solid fa-play"></i>
-        </div>
-          <div id="delete-btn">
-          <i class="fa fa-regular fa-trash-alt" data-component-id="task-component-${componentCount}" data-target="#deleteModal" data-toggle="modal" ></i>
-        </div>
-        </div>
-  `;    
-        
-componentCount++;
-
-
-
-// Delete task
-const deleteBtn = component.querySelector('#delete-btn');
-deleteBtn.addEventListener('click', (event) => {
-    const id = event.target.dataset.componentId;
-    const taskComponent = document.getElementById(id);
-
-       const modal = document.createElement('div');
-       modal.id = `deleteModal-${id}`;
-  
-       modal.innerHTML = `
-          <div class="modal fade" data-backdrop="false" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel">Delete Task</h5>
-                  <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Are you sure you want to delete this task?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="blue-btn" data-dismiss="modal">No</button>
-                  <button type="button" class="red-btn" id="deleteButton">Yes</button>
-                </div>
-              </div>
-            </div>
-          </div>
-  `;
-
-  document.body.appendChild(modal);
-  
-
-  const deleteTask = modal.querySelector('#deleteButton');
-  deleteTask.addEventListener('click', () => {
-  taskComponent.remove();
-  modal.remove();
-  
-  
-  const deleteModal = document.getElementById(`deleteModal-${id}`);
-  deleteModal.classList.add('hide');
-});
-
-
-
-  const deleteModal = document.getElementById(`deleteModal-${id}`);
-  deleteModal.classList.add('show');
   })
+  .then(response => response.json())
+      .then(data => {
+        if (data.date) {
+          console.log(data.date);
+          // dateElement.innerText = `${data.date}`;
+          dateElement.innerText = `Changed ${data.date}`;
+        } else {
+          console.error(data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Fetch Error:', error);
+      });
+}
 
+  const toggleBtn = taskComponentElement.querySelector('#toggle-btn');
+  const displayResumeTime = taskComponentElement.querySelector('#display-resume-time');
+  const resumeBtn = taskComponentElement.querySelector(`#resume-btn-${taskComponent.id}`);
+  const inheritTaskTime = taskComponentElement.querySelector('#inherited-time');
 
+  resumeBtn.addEventListener('click', (event) => {
+    const clickedComponentId = event.currentTarget.getAttribute('data-component-id');
+    console.log(clickedComponentId);
 
-const toggleBtn = component.querySelector('#toggle-btn');
-const displayResumeTime = component.querySelector('#display-resume-time');
-const resumeBtn = component.querySelector('#resume-btn');
-const inheritTaskTime = component.querySelector('#inherited-time');
+    fetch('http://localhost/timetracker/index.php/timetracker/get_task_component_by_id/' + clickedComponentId)
+    .then(response => response.json())
+    .then(taskComponent => {
+      console.log(taskComponent);
+      const taskComponentTime = JSON.parse(taskComponent.taskComponentTime);
+      let resumeTime = taskComponentTime.resumeTime;
+      let totalTime = taskComponentTime.totalTime;
+
+      // Rest of your code
+      toggleBtn.className = toggleBtn.className === 'fa-solid fa-play' ? 'fa-solid fa-stop' : 'fa-solid fa-play';
+
+      if (toggleBtn.className === 'fa-solid fa-stop') {
+        let startTime = Date.now();
+        timerInterval = setInterval(() => {
+          let elapsedTime = Date.now() - startTime;
+          let formattedTime = formatTime(elapsedTime);
   
-        
-resumeBtn.addEventListener('click', (event) => {
-  const clickedComponentId = event.target.parentNode.dataset.componentId;
-  const taskComponent = taskComponents.find((component) => component.id === clickedComponentId);
-  console.log(taskComponent);
+          displayResumeTime.innerText = formattedTime;
+
+          resumeTime = formattedTime;
+        }, 10);
+      } else {
+        let savedResumeTime = displayResumeTime.innerText;
   
-  toggleBtn.className = toggleBtn.className === 'fas fa-regular fa-play' ? 'fas fa-regular fa-stop' : 'fas fa-regular fa-play';
-    
-    if(toggleBtn.className === 'fas fa-regular fa-stop'){
-      let startTime = Date.now(); 
-      timerInterval = setInterval(() => {
-        let elapsedTime = Date.now() - startTime;
-        let formattedTime = formatTime(elapsedTime); 
-
-        displayResumeTime.innerText = formattedTime;
-        taskComponent.taskComponentTime.resumeTime = formattedTime;
-      }, 10);  
-    } else {
-        let savedResumeTime = taskComponent.taskComponentTime.resumeTime;
-
-        console.log("inherited: " + taskComponent.taskComponentTime.totalTime);
-        console.log("savedresumed: " + savedResumeTime);
-        
+        // console.log("inherited: " + totalTime);
+        // console.log("savedresumed: " + savedResumeTime);
+  
         const [hours1, minutes1, seconds1] = savedResumeTime.split(':').map(Number);
-        const [hours2, minutes2, seconds2] = taskComponent.taskComponentTime.totalTime.split(':').map(Number);
+        const [hours2, minutes2, seconds2] = totalTime.split(':').map(Number);
   
         let totalSeconds = seconds1 + seconds2;
         let totalMinutes = minutes1 + minutes2;
@@ -534,25 +454,106 @@ resumeBtn.addEventListener('click', (event) => {
         if (totalSeconds >= 60) {
           totalSeconds -= 60;
           totalMinutes++;
-        }  
+        }
   
         if (totalMinutes >= 60) {
           totalMinutes -= 60;
           totalHours++;
-        }  
+        }
   
         const result = `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+  
+        totalTime = result;
+        // console.log("TotalTime: " + totalTime);
+  
         
-        taskComponent.taskComponentTime.totalTime = result;
-        console.log("TotalTime: " + taskComponent.taskComponentTime.totalTime);
-        
-        inheritTaskTime.innerText = `Total Time: ${taskComponent.taskComponentTime.totalTime}`;
+        const updateData = {
+          totalTime: totalTime,
+        };
 
+        fetch('http://localhost/timetracker/index.php/timetracker/update_task_component/' + clickedComponentId, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updateData)
+        })
+        .then(response => response.json())
+        .then(updatedTaskComponent => {
+          console.log('Task component updated:', updatedTaskComponent);
+          updateDate(clickedComponentId);
+        });
+        
+        inheritTaskTime.innerText = `Total Time: ${totalTime}`;
+        
         clearInterval(timerInterval);
         displayResumeTime.innerText = "00:00:00";
-      };
-  });  
+      }
+      
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
 
-  return component;
+   
+  });
 
+ 
+  const deleteBtn = taskComponentElement.querySelector(`#delete-btn-${taskComponent.id} .fa-trash-alt`);
+  
+  deleteBtn.addEventListener('click', (event) => {
+    const componentId = event.target.getAttribute('data-component-id');
+
+    const taskComponent = document.getElementById(componentId);
+
+    const modal = document.createElement('div');
+    modal.id = `deleteModal-${componentId}`;
+    modal.innerHTML = `
+      <div class="modal fade" data-backdrop="false" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Delete Task</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this task?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="blue-btn" data-dismiss="modal">No</button>
+              <button type="button" class="red-btn" id="deleteButton">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const deleteTask = modal.querySelector('#deleteButton');
+    deleteTask.addEventListener('click', () => {
+      
+        fetch(`http://localhost/timetracker/index.php/timetracker/delete_task_component/${componentId}`, {
+          method: 'DELETE'
+        })
+          .then(response => {
+            if (response.ok) {
+              console.log('Task component deleted successfully');
+              taskComponent.remove();
+            } else {
+              console.error('Error deleting task component from the database');
+            }
+          })
+          .catch(error => console.error(error));
+
+      modal.remove();
+    });
+
+    const deleteModal = document.getElementById(`deleteModal-${componentId}`);
+    deleteModal.classList.add('show');
+  });
+
+  return taskComponentElement;
+  
 }
+

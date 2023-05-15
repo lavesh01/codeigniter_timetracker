@@ -133,9 +133,12 @@
             <div id="date-area"></div>
 
             <diV id="task-component-area">
+
+                <div id="task-wrapper"> </div>
+
                 <!-- Task Component generate here  -->
 
-                <?php foreach ($tasks as $task): ?>
+                <!-- <?php foreach ($tasks as $task): ?>
                 <div class="task-component" id="<?php echo $task['id']; ?>">
                     <div class="top">
                         <?php
@@ -183,18 +186,17 @@
                         ?>
                                 <?php echo $resumeTime; ?>
                             </div>
-                            <div id="resume-btn" data-component-id="<?php echo $task['id']; ?>">
+                            <div id="resume-btn-<?php echo $task['id']; ?>" data-component-id="<?php echo $task['id']; ?>">
                                 <i id="toggle-btn" class="fa-solid fa-play"></i>
                             </div>
-                            <div id="delete-btn">
-                                <i class="fa fa-regular fa-trash-alt"
-                                    data-component-id="task-component-<?php echo $task['id']; ?>"
+                            <div id="delete-btn-<?php echo $task['id']; ?>">
+                                <i class="fa fa-regular fa-trash-alt" data-component-id="<?php echo $task['id']; ?>"
                                     data-target="#deleteModal" data-toggle="modal"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-                <?php endforeach; ?>
+                <?php endforeach; ?> -->
 
             </div>
 

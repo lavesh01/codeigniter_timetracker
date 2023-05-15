@@ -24,6 +24,7 @@
     border-bottom: 1px solid #C6D2D9;
     padding: 1rem;
     border: 1px solid #c6d2d9;
+    margin-bottom: 10px;
 }
 
 .date {
@@ -34,15 +35,29 @@
     font-weight: 500;
 }
 
+
+
 .top {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: space-between;
     font-size: 14px;
     font-weight: 500;
     height: 1vh;
     color: #b4b4b5;
     margin-bottom: 1rem;
+}
+
+
+#date{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+#inherited-time{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .task-component:hover {
@@ -185,7 +200,7 @@
     font-weight: 500;
 
 }
-#resume-btn {
+.resume-btn {
     margin: 0 2rem;
     cursor: pointer;
 }
@@ -212,7 +227,7 @@
     align-items: center;
 }
 
-#delete-btn{
+.delete-btn{
     cursor: pointer;
 }
 
@@ -245,6 +260,13 @@
     --bs-dropdown-link-active-bg: none !important;
 }
 
+.task-name {
+    border: none;
+    outline: none;
+}
+.task-name:hover {
+    
+}
 
 
 
